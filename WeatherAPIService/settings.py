@@ -23,6 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
+
+VISUAL_CROSSING_API_KEY = os.getenv("VISUAL_CROSSING_API_KEY", default="")
+
 SECRET_KEY = os.getenv("WEATHER_API_SECRET", default="")
 
 # SECURITY WARNING: don't run with debug turned on in production!

@@ -1,0 +1,1 @@
+weather_api_base_url = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/'
