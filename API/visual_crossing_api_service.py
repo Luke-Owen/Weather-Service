@@ -1,9 +1,10 @@
 import string
 from datetime import datetime
 from typing import Dict
-
 import requests
 from django.conf import settings
+from django.core.cache import cache
+
 from API import constants
 
 class WeatherData:
@@ -26,6 +27,12 @@ def get_weather_data(location: str, start_date, end_date: datetime=None) -> Weat
     else:
         url: str = f"{base_url}{location}/{formatted_start_date}"
 
+    cache_key: str = f"{location}_{start_date.strftime('%Y-%m-%d')}"
+    cached_value: WeatherData = cache.get(cache_key)
+
+    if cached_value:
+        return cached_value
+
     params: Dict[str, str] = {
         'unitGroup': 'metric',  # For Celsius and metric units
         'key': api_key,
@@ -42,7 +49,10 @@ def get_weather_data(location: str, start_date, end_date: datetime=None) -> Weat
         description: str = days['description']
         temperature: int = days['temp']
         date: str = days['datetime']
-        return WeatherData(resolved_address, description, temperature, date)
+
+        weather_data: WeatherData = WeatherData(resolved_address, description, temperature, date)
+        cache.set(cache_key, weather_data, timeout= 60 * 10) # cache for 10 minutes
+        return weather_data
     elif response.status_code == 400:
         return WeatherData("", "", 0, "", response.text)
     else:
