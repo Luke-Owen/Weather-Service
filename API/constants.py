@@ -1,1 +1,3 @@
-weather_api_base_url = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/'
+import string
+
+weather_api_base_url: string = 'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/'
