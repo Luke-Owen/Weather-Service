@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 import os
+import string
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -23,7 +24,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 load_dotenv()
-SECRET_KEY = os.getenv("WEATHER_API_SECRET", default="")
+
+VISUAL_CROSSING_API_KEY: string = os.getenv("VISUAL_CROSSING_API_KEY", default="")
+
+SECRET_KEY: string = os.getenv("WEATHER_API_SECRET", default="")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
