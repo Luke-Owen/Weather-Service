@@ -7,11 +7,12 @@ from django.conf import settings
 from API import constants
 
 class WeatherData:
-    def __init__(self, address: str, description: str, temperature: int, selected_date: str):
+    def __init__(self, address: str, description: str, temperature: int, selected_date: str, error_message: str=None):
         self.address = address
         self.description = description
         self.temperature = temperature
         self.selected_date = selected_date
+        self.error_message = error_message
 
 def get_weather_data(location: str, start_date, end_date: datetime=None) -> WeatherData:
     api_key: string = settings.VISUAL_CROSSING_API_KEY
@@ -42,5 +43,7 @@ def get_weather_data(location: str, start_date, end_date: datetime=None) -> Weat
         temperature: int = days['temp']
         date: str = days['datetime']
         return WeatherData(resolved_address, description, temperature, date)
+    elif response.status_code == 400:
+        return WeatherData("", "", 0, "", response.text)
     else:
         response.raise_for_status()
