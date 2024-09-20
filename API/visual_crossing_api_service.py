@@ -7,13 +7,13 @@ from django.conf import settings
 from API import constants
 
 class WeatherData:
-    def __init__(self, address: str, description: str, temperature: int, date_time: datetime):
+    def __init__(self, address: str, description: str, temperature: int, selected_date: str):
         self.address = address
         self.description = description
         self.temperature = temperature
-        self.date_time = date_time
+        self.selected_date = selected_date
 
-def get_weather_data(location: str, start_date: datetime, end_date: datetime=None):
+def get_weather_data(location: str, start_date, end_date: datetime=None) -> WeatherData:
     api_key: string = settings.VISUAL_CROSSING_API_KEY
     base_url: string = constants.weather_api_base_url
 
@@ -40,7 +40,7 @@ def get_weather_data(location: str, start_date: datetime, end_date: datetime=Non
         days: Dict = json_response['days'][0]
         description: str = days['description']
         temperature: int = days['temp']
-        date_time: datetime = datetime.fromtimestamp(days['datetimeEpoch'])
-        return WeatherData(resolved_address, description, temperature, date_time)
+        date: str = days['datetime']
+        return WeatherData(resolved_address, description, temperature, date)
     else:
         response.raise_for_status()
