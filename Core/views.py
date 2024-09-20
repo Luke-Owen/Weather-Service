@@ -1,7 +1,14 @@
-from django.views.generic import TemplateView, ListView
+from datetime import datetime
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.views import View
 
-class Index(ListView):
+import API.visual_crossing_api_service
+
+
+class Index(View):
     template_name = "Core/index.html"
 
-    def get_queryset(self):
-        return None
+    def get(self, request) -> HttpResponse:
+        weather_data = API.visual_crossing_api_service.get_weather_data("London", datetime.now())
+        return render(request, self.template_name, {'weather_data': weather_data})
