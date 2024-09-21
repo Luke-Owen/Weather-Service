@@ -7,6 +7,11 @@ from requests.exceptions import HTTPError
 from API.visual_crossing_api_service import get_weather_data, WeatherData
 
 @override_settings(VISUAL_CROSSING_API_KEY='dummy_api_key')
+@override_settings(CACHES = {
+    "default": {
+        "BACKEND": 'django.core.cache.backends.dummy.DummyCache',
+    }
+})
 class VisualCrossingAPIServiceTests(TestCase):
 
     @patch('requests.get')
