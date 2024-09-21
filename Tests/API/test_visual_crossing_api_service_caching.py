@@ -11,7 +11,7 @@ from API.visual_crossing_api_service import get_weather_data, WeatherData
         "BACKEND": 'django.core.cache.backends.dummy.DummyCache',
     }
 })
-class VisualCrossingAPIServiceCachingTests(TestCase):
+class TestVisualCrossingAPIServiceCachingTest(TestCase):
     @patch('requests.get')
     @patch('django.core.cache.backends.dummy.DummyCache')
     def test_get_weather_data_assert_cache_miss(self, mock_cache, mock_get):
