@@ -1,9 +1,10 @@
 import unittest
 from datetime import datetime
 from unittest.mock import patch
+
+from django.core.cache import cache
 from django.test import override_settings, TestCase
 from requests.exceptions import HTTPError
-
 from API.visual_crossing_api_service import get_weather_data, WeatherData
 
 @override_settings(VISUAL_CROSSING_API_KEY='dummy_api_key')
@@ -13,22 +14,12 @@ from API.visual_crossing_api_service import get_weather_data, WeatherData
     }
 })
 class VisualCrossingAPIServiceTests(TestCase):
-
     @patch('requests.get')
     def test_get_weather_data_returns_200_assert_instance(self, mock_get):
         # arrange
         mock_response = mock_get.return_value
         mock_response.status_code = 200
-        mock_response.json.return_value = {
-            'resolvedAddress': 'London, United Kingdom',
-            'days': [
-                {
-                    'description': 'partly cloudy',
-                    'temp': 17,
-                    'datetime': '2024-09-21'
-                }
-            ]
-        }
+        mock_response.json.return_value = self.mock_json_data
 
         # act
         weather_data = get_weather_data('London', datetime.now())
@@ -80,6 +71,51 @@ class VisualCrossingAPIServiceTests(TestCase):
         mock_get.assert_called_once()
         mock_get.json.assert_not_called()
         mock_response.raise_for_status.assert_called_once()
+
+    @patch('requests.get')
+    @patch('django.core.cache.backends.dummy.DummyCache')
+    def test_get_weather_data_assert_cache_miss(self, mock_cache, mock_get):
+        # arrange
+        mock_cache_instance = mock_cache.return_value
+        mock_cache_instance.get.return_value = None
+        mock_response = mock_get.return_value
+        mock_response.status_code = 200
+        mock_response.json.return_value = self.mock_json_data
+
+        # act
+        get_weather_data('London', datetime.now())
+
+        # assert
+        mock_cache_instance.get.assert_called_once()
+        mock_cache_instance.set.assert_called_once()
+
+    @patch('requests.get')
+    @patch('django.core.cache.backends.dummy.DummyCache')
+    def test_get_weather_data_assert_cache_hits(self, mock_cache, mock_get):
+        # arrange
+        mock_cache_instance = mock_cache.return_value
+        mock_cache_instance.get.return_value = {'London_2024-09-21': WeatherData}
+        mock_response = mock_get.return_value
+        mock_response.status_code = 200
+        mock_response.json.return_value = self.mock_json_data
+
+        # act
+        get_weather_data('London', datetime.now())
+
+        # assert
+        mock_cache_instance.get.assert_called_once()
+        mock_cache_instance.set.assert_not_called()
+
+    mock_json_data = {
+            'resolvedAddress': 'London, United Kingdom',
+            'days': [
+                {
+                    'description': 'partly cloudy',
+                    'temp': 17,
+                    'datetime': '2024-09-21'
+                }
+            ]
+        }
 
 if __name__ == '__main__':
     unittest.main()
