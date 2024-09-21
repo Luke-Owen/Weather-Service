@@ -1,7 +1,6 @@
 import string
 from datetime import datetime
 from typing import Dict
-
 import requests
 from django.conf import settings
 from API import constants
@@ -14,7 +13,7 @@ class WeatherData:
         self.selected_date = selected_date
         self.error_message = error_message
 
-def get_weather_data(location: str, start_date, end_date: datetime=None) -> WeatherData:
+def get_weather_data(location: str, start_date: datetime, end_date: datetime=None) -> WeatherData:
     api_key: string = settings.VISUAL_CROSSING_API_KEY
     base_url: string = constants.weather_api_base_url
 
