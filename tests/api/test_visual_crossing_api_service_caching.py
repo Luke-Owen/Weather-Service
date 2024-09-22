@@ -32,6 +32,12 @@ class TestVisualCrossingAPIServiceCachingMissTest(TestCase):
         mock_cache_instance.get.assert_called_once()
         mock_cache_instance.set.assert_called_once()
 
+@override_settings(VISUAL_CROSSING_API_KEY='dummy_api_key')
+@override_settings(CACHES = {
+    "default": {
+        "BACKEND": 'django.core.cache.backends.dummy.DummyCache',
+    }
+})
 class TestVisualCrossingAPIServiceCachingHitTest(TestCase):
     """test get_weather_data cache hit function"""
     @patch('requests.get')
