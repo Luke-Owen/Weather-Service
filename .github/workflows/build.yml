@@ -31,4 +31,4 @@ jobs:
         pylint $(git ls-files '*.py')
     - name: Run tests
       run: |
-        python manage.py test
+        python manage.py test --settings=tests.test_settings

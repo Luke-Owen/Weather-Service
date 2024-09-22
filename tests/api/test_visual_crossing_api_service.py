@@ -3,17 +3,11 @@
 import unittest
 from datetime import datetime
 from unittest.mock import patch
-from django.test import override_settings, TestCase
+from django.test import TestCase
 from requests.exceptions import HTTPError
 from api.visual_crossing_api_service import get_weather_data, WeatherData
 from tests.api.helper.data import mock_json_data
 
-@override_settings(VISUAL_CROSSING_API_KEY='dummy_api_key')
-@override_settings(CACHES = {
-    "default": {
-        "BACKEND": 'django.core.cache.backends.dummy.DummyCache',
-    }
-})
 class TestVisualCrossingAPIService(TestCase):
     """class handles unit tests for visual crossing api service"""
     @patch('requests.get')
