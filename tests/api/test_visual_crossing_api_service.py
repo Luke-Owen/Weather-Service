@@ -32,11 +32,11 @@ class TestVisualCrossingAPIService(TestCase):
         mock_response.json.assert_called_once()
         mock_response.raise_for_status.assert_not_called()
         self.assertIsInstance(weather_data, WeatherData)
-        self.assertIs(weather_data.selected_date, '2024-09-21')
-        self.assertIs(weather_data.address, 'London, United Kingdom')
-        self.assertIs(weather_data.temperature, 17)
-        self.assertIs(weather_data.description, 'partly cloudy')
-        self.assertIs(weather_data.error_message, None)
+        self.assertEqual(weather_data.selected_date, '2024-09-21')
+        self.assertEqual(weather_data.address, 'London, United Kingdom')
+        self.assertEqual(weather_data.temperature, 17)
+        self.assertEqual(weather_data.description, 'partly cloudy')
+        self.assertEqual(weather_data.error_message, None)
 
     @patch('requests.get')
     def test_get_weather_data_returns_400_assert_returns_error_message(self, mock_get):
