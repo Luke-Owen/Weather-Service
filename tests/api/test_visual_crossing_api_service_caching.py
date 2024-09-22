@@ -1,4 +1,5 @@
 """imports for api service cache tests"""
+import unittest
 from datetime import datetime
 from unittest.mock import patch
 from django.test import override_settings, TestCase
@@ -11,8 +12,8 @@ from tests.api.helper.data import mock_json_data
         "BACKEND": 'django.core.cache.backends.dummy.DummyCache',
     }
 })
-class TestVisualCrossingAPIServiceCachingTest(TestCase):
-    """test get_weather_data cache functions"""
+class TestVisualCrossingAPIServiceCachingMissTest(TestCase):
+    """test get_weather_data cache miss function"""
     @patch('requests.get')
     @patch('django.core.cache.backends.dummy.DummyCache')
     def test_get_weather_data_assert_cache_miss(self, mock_cache, mock_get):
@@ -31,6 +32,8 @@ class TestVisualCrossingAPIServiceCachingTest(TestCase):
         mock_cache_instance.get.assert_called_once()
         mock_cache_instance.set.assert_called_once()
 
+class TestVisualCrossingAPIServiceCachingHitTest(TestCase):
+    """test get_weather_data cache hit function"""
     @patch('requests.get')
     @patch('django.core.cache.backends.dummy.DummyCache')
     def test_get_weather_data_assert_cache_hits(self, mock_cache, mock_get):
@@ -50,3 +53,6 @@ class TestVisualCrossingAPIServiceCachingTest(TestCase):
         mock_cache_instance.set.assert_not_called()
 
         mock_cache_instance.get.return_value = None
+
+if __name__ == '__main__':
+    unittest.main()
