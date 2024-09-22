@@ -1,9 +1,12 @@
+"""module handles tests for visual crossing service."""
+
 import unittest
 from datetime import datetime
 from unittest.mock import patch
 from django.test import override_settings, TestCase
 from requests.exceptions import HTTPError
-from API.visual_crossing_api_service import get_weather_data, WeatherData
+from api.visual_crossing_api_service import get_weather_data, WeatherData
+from tests.api.helper.data import mock_json_data
 
 @override_settings(VISUAL_CROSSING_API_KEY='dummy_api_key')
 @override_settings(CACHES = {
@@ -12,12 +15,14 @@ from API.visual_crossing_api_service import get_weather_data, WeatherData
     }
 })
 class TestVisualCrossingAPIService(TestCase):
+    """class handles unit tests for visual crossing api service"""
     @patch('requests.get')
     def test_get_weather_data_returns_200_assert_instance(self, mock_get):
+        """test get_weather_data returns 200 OK"""
         # arrange
         mock_response = mock_get.return_value
         mock_response.status_code = 200
-        mock_response.json.return_value = self.mock_json_data
+        mock_response.json.return_value = mock_json_data
 
         # act
         weather_data = get_weather_data('London', datetime.now())
@@ -35,6 +40,7 @@ class TestVisualCrossingAPIService(TestCase):
 
     @patch('requests.get')
     def test_get_weather_data_returns_400_assert_returns_error_message(self, mock_get):
+        """test get_weather_data returns 400 error with message"""
         # arrange
         mock_response = mock_get.return_value
         mock_response.status_code = 400
@@ -56,6 +62,7 @@ class TestVisualCrossingAPIService(TestCase):
 
     @patch('requests.get')
     def test_get_weather_data_returns_http_error_code_assert_error_raised(self, mock_get):
+        """test get_weather_data raises HTTPError"""
         # arrange
         mock_response = mock_get.return_value
         mock_response.status_code = 404
@@ -69,17 +76,6 @@ class TestVisualCrossingAPIService(TestCase):
         mock_get.assert_called_once()
         mock_get.json.assert_not_called()
         mock_response.raise_for_status.assert_called_once()
-
-    mock_json_data = {
-            'resolvedAddress': 'London, United Kingdom',
-            'days': [
-                {
-                    'description': 'partly cloudy',
-                    'temp': 17,
-                    'datetime': '2024-09-21'
-                }
-            ]
-        }
 
 if __name__ == '__main__':
     unittest.main()
