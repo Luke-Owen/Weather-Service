@@ -1,5 +1,5 @@
 Weather app that show the forecast of whatever city you like using Visual Crossing's API. 
-Written in Python using Django framework and a React frontend.
+Written in Python using Django framework.
 
 Steps to use:
 
